@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session
 from genai_model import chat_with_customer
 import sqlite3
+import os
 from datetime import datetime
 
 
@@ -22,7 +23,11 @@ app.secret_key = os.getenv(
 # ==========================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, "customer_support.db")
+
+DATABASE = os.path.join(
+    BASE_DIR,
+    "customer_support.db"
+)
 
 
 def get_db_connection():
@@ -102,7 +107,12 @@ def create_ticket():
 
     # Create temporary row first
     cursor.execute("""
-        INSERT INTO tickets (ticket_id, status, created_at)
+        INSERT INTO tickets
+        (
+            ticket_id,
+            status,
+            created_at
+        )
         VALUES (?, ?, ?)
     """, (
         "TEMP",
@@ -112,9 +122,10 @@ def create_ticket():
 
     database_id = cursor.lastrowid
 
+    # Generate ticket ID
     ticket_id = f"TKT-{database_id:04d}"
 
-    # Replace TEMP with actual ticket ID
+    # Update temporary ticket ID
     cursor.execute("""
         UPDATE tickets
         SET ticket_id = ?
@@ -185,6 +196,10 @@ def chat():
 
     try:
 
+        # --------------------------------------------------
+        # Get request data
+        # --------------------------------------------------
+
         data = request.get_json()
 
         if not data:
@@ -193,6 +208,10 @@ def chat():
                 "success": False,
                 "error": "No data received."
             }), 400
+
+        # --------------------------------------------------
+        # Get customer message
+        # --------------------------------------------------
 
         message = data.get(
             "message",
@@ -207,7 +226,7 @@ def chat():
             }), 400
 
         # --------------------------------------------------
-        # Conversation history from JavaScript
+        # Conversation history
         # --------------------------------------------------
 
         conversation_history = data.get(
@@ -216,10 +235,14 @@ def chat():
         )
 
         # --------------------------------------------------
-        # Get existing ticket or create new ticket
+        # Get existing ticket
         # --------------------------------------------------
 
         ticket_id = session.get("ticket_id")
+
+        # --------------------------------------------------
+        # Create new ticket if required
+        # --------------------------------------------------
 
         if not ticket_id:
 
@@ -288,7 +311,7 @@ def chat():
         print("====================================")
 
         # --------------------------------------------------
-        # Send response to frontend
+        # Return response to frontend
         # --------------------------------------------------
 
         return jsonify({
@@ -318,16 +341,26 @@ def chat():
 
 
 # ==========================================================
+# DATABASE INITIALIZATION
+# ==========================================================
+
+# Initialize database when Flask/Gunicorn starts
+init_database()
+
+
+# ==========================================================
 # RUN
 # ==========================================================
 
 if __name__ == "__main__":
 
-    # Create database/tables when application starts
-    init_database()
-
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        ),
+        debug=False
     )
