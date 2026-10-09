@@ -2,18 +2,29 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>AI Customer Support</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 
 <body>
 
+
 <div class="chat-container">
+
+
+    <!-- ==================================================
+         HEADER
+    =================================================== -->
 
     <div class="chat-header">
 
@@ -22,18 +33,35 @@
         </div>
 
         <div>
-            <h1>Customer Assistant Support</h1>
+
+            <h1>
+                Customer Assistant Support
+            </h1>
 
             <div class="status">
+
                 <span class="status-dot"></span>
-                Online
+
+                <span id="status-text">
+                    Online
+                </span>
+
             </div>
+
         </div>
 
     </div>
 
 
-    <div id="chat-box" class="chat-box">
+    <!-- ==================================================
+         CHAT BOX
+    =================================================== -->
+
+    <div id="chat-box"
+         class="chat-box">
+
+
+        <!-- Initial Assistant Message -->
 
         <div class="message bot-message">
 
@@ -48,8 +76,10 @@
                 </div>
 
                 <div class="bubble">
+
                     Hi! 👋 I'm your customer support assistant.
                     How can I help you today?
+
                 </div>
 
             </div>
@@ -59,7 +89,12 @@
     </div>
 
 
-    <div id="typing" class="typing">
+    <!-- ==================================================
+         TYPING INDICATOR
+    =================================================== -->
+
+    <div id="typing"
+         class="typing">
 
         <span></span>
         <span></span>
@@ -72,13 +107,19 @@
     </div>
 
 
+    <!-- ==================================================
+         INPUT AREA
+    =================================================== -->
+
     <div class="input-area">
+
 
         <textarea
             id="message-input"
             placeholder="Type your message..."
             rows="1">
         </textarea>
+
 
         <button
             id="send-button"
@@ -88,12 +129,33 @@
 
         </button>
 
+
     </div>
+
+
+    <!-- ==================================================
+         END CHAT
+    =================================================== -->
+
+    <div class="end-chat-area">
+
+        <button
+            id="end-chat-button"
+            type="button"
+            onclick="endChat()">
+
+            End Chat
+
+        </button>
+
+    </div>
+
 
 </div>
 
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 
 </body>
 
