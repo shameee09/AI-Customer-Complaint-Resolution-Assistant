@@ -341,10 +341,98 @@ def chat():
 
 
 # ==========================================================
+# END CHAT
+# ==========================================================
+
+@app.route("/api/end-chat", methods=["POST"])
+def end_chat():
+
+    try:
+
+        # --------------------------------------------------
+        # Get active ticket
+        # --------------------------------------------------
+
+        ticket_id = session.get("ticket_id")
+
+        if not ticket_id:
+
+            return jsonify({
+
+                "success": False,
+
+                "error": "No active chat found."
+
+            }), 400
+
+        # --------------------------------------------------
+        # Update ticket status
+        # --------------------------------------------------
+
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            UPDATE tickets
+            SET status = ?
+            WHERE ticket_id = ?
+        """, (
+            "Resolved",
+            ticket_id
+        ))
+
+        connection.commit()
+
+        connection.close()
+
+        # --------------------------------------------------
+        # Remove ticket from current session
+        # --------------------------------------------------
+
+        session.pop("ticket_id", None)
+
+        print("\n====================================")
+        print("CHAT ENDED")
+        print("TICKET ID:")
+        print(ticket_id)
+        print("STATUS: Resolved")
+        print("====================================")
+
+        # --------------------------------------------------
+        # Return result
+        # --------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "ticket_id": ticket_id,
+
+            "status": "Resolved"
+
+        })
+
+    except Exception as e:
+
+        print("\n====================================")
+        print("END CHAT ERROR:")
+        print(str(e))
+        print("====================================")
+
+        return jsonify({
+
+            "success": False,
+
+            "error": str(e)
+
+        }), 500
+
+
+# ==========================================================
 # DATABASE INITIALIZATION
 # ==========================================================
 
-# Initialize database when Flask/Gunicorn starts
 init_database()
 
 
