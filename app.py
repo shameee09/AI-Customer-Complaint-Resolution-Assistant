@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session
 from genai_model import chat_with_customer
 import sqlite3
-import os
 from datetime import datetime
 
 
@@ -328,7 +327,7 @@ if __name__ == "__main__":
     init_database()
 
     app.run(
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=5000,
         debug=True
     )
