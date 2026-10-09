@@ -331,3 +331,30 @@ body {
         padding: 15px;
     }
 }
+/* ==========================================================
+   END CHAT
+========================================================== */
+
+.end-chat-area {
+    display: flex;
+    justify-content: center;
+    padding: 8px 15px 12px;
+}
+
+#end-chat-button {
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 5px 12px;
+}
+
+#end-chat-button:hover {
+    color: #d9534f;
+}
+
+#end-chat-button:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
